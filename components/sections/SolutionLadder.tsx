@@ -1,8 +1,10 @@
 
 import React, { useRef } from 'react';
-import { motion, useScroll, AnimatePresence } from 'framer-motion';
-import { ChevronDown, CheckCircle2 } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { CheckCircle2, FileSearch, Zap, Rocket, Layers, Plug, Shield } from 'lucide-react';
 import { SectionHeader, BookingButton } from '../UI';
+
+const cardIcons = [FileSearch, Zap, Rocket];
 
 const PricingCard: React.FC<{
   title: string;
@@ -11,17 +13,44 @@ const PricingCard: React.FC<{
   isBand?: boolean;
   deliverables: string[];
   index: number;
-}> = ({ title, cost, description, isBand, deliverables, index }) => {
+  featured?: boolean;
+}> = ({ title, cost, description, isBand, deliverables, index, featured }) => {
+  const Icon = cardIcons[index];
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="bg-white border border-slate-200 rounded-[2px] p-8 flex flex-col h-full hover:border-[#B85C38]/30 transition-colors shadow-sm"
+      whileHover={{ y: -8, boxShadow: featured ? '0 25px 50px -12px rgba(184, 92, 56, 0.15)' : '0 25px 50px -12px rgba(0, 0, 0, 0.08)' }}
+      className={`relative border rounded-[4px] p-8 flex flex-col h-full transition-all duration-300 ${
+        featured
+          ? 'bg-gradient-to-br from-white to-[#B85C38]/5 border-[#B85C38]/30 shadow-lg'
+          : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm'
+      }`}
     >
+      {/* Featured badge */}
+      {featured && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#B85C38] text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg">
+          Most Popular
+        </div>
+      )}
+
+      {/* Icon */}
+      <motion.div
+        className={`w-12 h-12 rounded-[4px] flex items-center justify-center mb-4 ${
+          featured ? 'bg-[#B85C38]/10' : 'bg-slate-100'
+        }`}
+        whileHover={{ rotate: 5, scale: 1.05 }}
+      >
+        <Icon className={`w-6 h-6 ${featured ? 'text-[#B85C38]' : 'text-slate-600'}`} />
+      </motion.div>
+
       <h3 className="text-xl font-serif font-bold text-slate-900 mb-2">{title}</h3>
-      <div className="text-3xl font-bold text-slate-800 mb-1 font-mono">{cost}</div>
+      <div className={`text-3xl font-bold mb-1 font-mono ${featured ? 'text-[#B85C38]' : 'text-slate-800'}`}>
+        {cost}
+      </div>
       {isBand && <div className="text-xs text-[#B85C38] font-bold uppercase tracking-widest mb-4">Typical Band</div>}
       {!isBand && <div className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-4">Fixed Price</div>}
 
@@ -30,10 +59,17 @@ const PricingCard: React.FC<{
       <div className="flex-grow">
         <ul className="space-y-3">
           {deliverables.map((item, i) => (
-            <li key={i} className="flex items-start gap-3 text-sm text-slate-600">
-              <CheckCircle2 className="w-4 h-4 text-[#B85C38] mt-0.5 flex-shrink-0" />
+            <motion.li
+              key={i}
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 + i * 0.05 }}
+              className="flex items-start gap-3 text-sm text-slate-600"
+            >
+              <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${featured ? 'text-[#B85C38]' : 'text-slate-400'}`} />
               <span>{item}</span>
-            </li>
+            </motion.li>
           ))}
         </ul>
       </div>
@@ -43,6 +79,11 @@ const PricingCard: React.FC<{
 
 export const SolutionLadder: React.FC = () => {
   const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
 
   const offerings = [
     {
@@ -50,6 +91,7 @@ export const SolutionLadder: React.FC = () => {
       cost: "Free",
       description: "30-minute fit assessment. We check your problem against our capabilities.",
       isBand: false,
+      featured: false,
       deliverables: [
         "Workflow audit",
         "Problem mapping",
@@ -59,9 +101,10 @@ export const SolutionLadder: React.FC = () => {
     },
     {
       title: "Scoping Workshop",
-      cost: "$3,000–$5,000",
+      cost: "$3k–$5k",
       description: "4-hour deep dive. We map the problem and architect the solution.",
       isBand: true,
+      featured: false,
       deliverables: [
         "Deep problem analysis",
         "Workflow redesign",
@@ -71,9 +114,10 @@ export const SolutionLadder: React.FC = () => {
     },
     {
       title: "Implementation Sprint",
-      cost: "$15,000–$25,000",
-      description: "6-week build. We deploy working agents to your team.",
+      cost: "$15k–$25k",
+      description: "6-week build. We deploy working AI agents to your team.",
       isBand: true,
+      featured: true,
       deliverables: [
         "1–2 deployed workflows",
         "Full QA and testing",
@@ -84,42 +128,78 @@ export const SolutionLadder: React.FC = () => {
     }
   ];
 
-  return (
-    <section id="pricing" ref={ref} className="py-24 px-6 bg-slate-50 border-t border-slate-200">
-      <div className="max-w-6xl mx-auto">
-        <SectionHeader title="Commercials" subtitle="Pricing that qualifies, not surprises." />
+  const priceDrivers = [
+    { icon: Layers, title: "Complexity", desc: "Number of distinct AI agents or workflows required." },
+    { icon: Plug, title: "Integrations", desc: "Systems involved (e.g., Salesforce, SharePoint, ERPs)." },
+    { icon: Shield, title: "Security", desc: "Requirements for Private VPCs, SSO, or on-prem deployment." }
+  ];
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+  return (
+    <section id="pricing" ref={ref} className="py-24 px-6 bg-slate-50 border-t border-slate-200 relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <motion.div
+        style={{ y: bgY }}
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
+      >
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, #B85C38 1px, transparent 1px)',
+          backgroundSize: '30px 30px'
+        }} />
+      </motion.div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <SectionHeader title="Commercials" subtitle="Transparent pricing that qualifies—no surprises." />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16">
           {offerings.map((offer, idx) => (
             <PricingCard key={idx} index={idx} {...offer} />
           ))}
         </div>
 
-        {/* Drivers */}
-        <div className="max-w-3xl mx-auto bg-white border border-slate-200 p-8 rounded-[2px]">
-          <h4 className="font-bold text-slate-900 mb-6 font-serif uppercase tracking-widest text-sm">What changes the price?</h4>
+        {/* Price Drivers */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-3xl mx-auto bg-white border border-slate-200 p-8 rounded-[4px] shadow-sm"
+        >
+          <h4 className="font-bold text-slate-900 mb-6 font-serif uppercase tracking-widest text-sm flex items-center gap-2">
+            <span className="w-8 h-0.5 bg-[#B85C38]"></span>
+            What changes the price?
+          </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <span className="block font-bold text-slate-800 mb-2">Complexity</span>
-              <p className="text-sm text-slate-600">Number of distinct AI agents or workflows required.</p>
-            </div>
-            <div>
-              <span className="block font-bold text-slate-800 mb-2">Integrations</span>
-              <p className="text-sm text-slate-600">Systems involved (e.g., Salesforce, SharePoint, ERPs).</p>
-            </div>
-            <div>
-              <span className="block font-bold text-slate-800 mb-2">Security</span>
-              <p className="text-sm text-slate-600">Requirements for Private VPCs, SSO, or On-prem deployment.</p>
-            </div>
+            {priceDrivers.map((driver, i) => {
+              const DriverIcon = driver.icon;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ y: -2 }}
+                  className="cursor-default"
+                >
+                  <DriverIcon className="w-5 h-5 text-[#B85C38] mb-3" />
+                  <span className="block font-bold text-slate-800 mb-2">{driver.title}</span>
+                  <p className="text-sm text-slate-600 leading-relaxed">{driver.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
-          <div className="mt-8 pt-8 border-t border-slate-100 text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="mt-8 pt-8 border-t border-slate-100 text-center"
+          >
             <p className="text-slate-500 italic text-sm mb-6">
-              "If you need enterprise procurement, I can quote a larger scope separately."
+              "Need enterprise procurement? I can quote a larger scope separately."
             </p>
             <BookingButton text="Get a Fixed Quote" />
-          </div>
-        </div>
-
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

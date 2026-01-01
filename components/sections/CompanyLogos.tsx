@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Building2 } from 'lucide-react';
 
 const companies = [
   { name: "Acer", logo: "/assets/companies/Acer.jpg" },
@@ -21,13 +22,12 @@ const LogoMarqueeRow: React.FC<{ items: typeof companies; direction?: 'left' | '
   direction = 'left',
   speed = 30
 }) => {
-  // Double the items for seamless loop
   const duplicatedItems = [...items, ...items];
 
   return (
-    <div className="relative flex overflow-hidden py-8">
+    <div className="relative flex overflow-hidden py-6">
       <motion.div
-        className="flex gap-12 md:gap-16 items-center"
+        className="flex gap-10 md:gap-14 items-center"
         animate={{
           x: direction === 'left' ? ['0%', '-50%'] : ['-50%', '0%'],
         }}
@@ -41,16 +41,18 @@ const LogoMarqueeRow: React.FC<{ items: typeof companies; direction?: 'left' | '
         }}
       >
         {duplicatedItems.map((company, idx) => (
-          <div
+          <motion.div
             key={`${company.name}-${idx}`}
-            className="flex-shrink-0 h-12 w-28 md:h-16 md:w-36 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity cursor-default grayscale hover:grayscale-0"
+            className="flex-shrink-0 h-10 w-24 md:h-14 md:w-32 flex items-center justify-center opacity-30 hover:opacity-100 transition-all duration-300 cursor-default grayscale hover:grayscale-0 hover:scale-110"
+            whileHover={{ y: -2 }}
           >
             <img
               src={company.logo}
               alt={company.name}
               className="max-h-full max-w-full object-contain"
+              loading="lazy"
             />
-          </div>
+          </motion.div>
         ))}
       </motion.div>
     </div>
@@ -62,20 +64,51 @@ export const CompanyLogos: React.FC = () => {
   const row2 = companies.slice(6);
 
   return (
-    <section className="py-20 bg-[#FAFAF9] overflow-hidden border-y border-slate-200">
-      <div className="max-w-7xl mx-auto px-6 mb-10 text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Trusted By</p>
-        <h3 className="text-slate-900 text-xl font-light">Delivering excellence for leading brands worldwide</h3>
-      </div>
+    <section className="py-16 bg-[#FAFAF9] overflow-hidden border-y border-slate-100">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-7xl mx-auto px-6 mb-8 text-center"
+      >
+        <div className="inline-flex items-center gap-2 mb-3">
+          <Building2 className="w-4 h-4 text-[#B85C38]" />
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Trusted By Industry Leaders</p>
+        </div>
+        <h3 className="text-slate-700 text-lg font-light">
+          From <span className="text-slate-900 font-medium">universities</span> to{' '}
+          <span className="text-slate-900 font-medium">luxury brands</span>—teams that demand precision.
+        </h3>
+      </motion.div>
 
       <div className="relative">
-        {/* Fade Gradients */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-[#FAFAF9] to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-[#FAFAF9] to-transparent z-10 pointer-events-none"></div>
+        {/* Enhanced Fade Gradients */}
+        <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-[#FAFAF9] via-[#FAFAF9]/80 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-[#FAFAF9] via-[#FAFAF9]/80 to-transparent z-10 pointer-events-none"></div>
 
-        <LogoMarqueeRow items={row1} direction="left" speed={40} />
-        <LogoMarqueeRow items={row2} direction="right" speed={45} />
+        <LogoMarqueeRow items={row1} direction="left" speed={35} />
+        <LogoMarqueeRow items={row2} direction="right" speed={40} />
       </div>
+
+      {/* Trust indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3 }}
+        className="flex justify-center gap-8 mt-8"
+      >
+        {[
+          { value: "12+", label: "Enterprise Clients" },
+          { value: "4", label: "Industries" },
+          { value: "3", label: "Countries" }
+        ].map((stat, i) => (
+          <div key={i} className="text-center">
+            <span className="block text-xl font-bold text-slate-900 font-serif">{stat.value}</span>
+            <span className="text-xs text-slate-500 uppercase tracking-wider">{stat.label}</span>
+          </div>
+        ))}
+      </motion.div>
     </section>
   );
 };

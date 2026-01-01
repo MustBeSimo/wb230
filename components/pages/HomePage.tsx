@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ScarcityBanner } from '../UI';
 import Hero from '../Hero';
-import { Outcomes, ProblemCards, SixWeekSprint, FitCheck, SolutionLadder, LabProof } from '../sections';
+import { Outcomes, ProblemCards, SixWeekSprint, FitCheck, SolutionLadder, LabProof, CompanyLogos, UseCases } from '../sections';
 import { Footer } from '../Footer';
 
 export const HomePage: React.FC = () => {
@@ -38,8 +38,10 @@ export const HomePage: React.FC = () => {
 
                 <main className="flex-grow">
                     <Hero />
+                    <CompanyLogos />
                     <div id="fit-check"><FitCheck /></div>
                     <div id="problem"><ProblemCards /></div>
+                    <div id="use-cases"><UseCases /></div>
                     <div id="deliverables"><SixWeekSprint /></div>
                     <Outcomes />
                     <div id="proof-section"><LabProof /></div>
