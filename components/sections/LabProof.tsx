@@ -1,54 +1,58 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
+import React from 'react';
 import { SectionHeader } from '../UI';
+import { ArrowRight, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const CaseSnippet: React.FC<{
+  industry: string;
+  outcome: string;
+  description: string;
+  highlight: string;
+}> = ({ industry, outcome, description, highlight }) => (
+  <div className="bg-white p-8 rounded border border-slate-200 shadow-sm relative overflow-hidden group hover:border-[#B85C38]/30 transition-colors">
+    <div className="absolute top-0 right-0 p-2 bg-stone-100 rounded-bl text-xs font-mono text-slate-500 flex items-center gap-1">
+      <Lock className="w-3 h-3" /> Redacted Client
+    </div>
+    <h4 className="text-xs font-bold uppercase tracking-widest text-[#B85C38] mb-4">{industry}</h4>
+    <h3 className="text-2xl font-bold text-slate-900 font-serif mb-4">{outcome}</h3>
+    <p className="text-slate-600 mb-6 font-light leading-relaxed">{description}</p>
+    <div className="py-2 px-3 bg-stone-50 border border-stone-200 inline-block rounded text-sm font-medium text-slate-700">
+      {highlight}
+    </div>
+  </div>
+);
 
 export const LabProof: React.FC = () => {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  
-  // Parallax: Text moves up, Image moves down (creating separation)
-  const yText = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const yImage = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const navigate = useNavigate();
 
   return (
-    <section ref={ref} className="py-32 px-6 max-w-7xl mx-auto overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <motion.div style={{ y: yText }}>
-          <SectionHeader title="We use what we sell." />
-          <h3 className="text-2xl font-bold text-slate-900 mb-4 font-serif">Case Study: MindGleam</h3>
-          <p className="text-lg text-slate-600 mb-8 leading-relaxed font-light">
-            See how we built an internal tool to manage creative assets using the same architecture we deploy for clients.
-          </p>
-          <a 
-            href="https://mindgleam.app/demo" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center text-[#BF5738] font-bold hover:text-slate-900 transition-colors group tracking-wide"
+    <section className="py-24 px-6 bg-slate-50 border-t border-slate-200">
+      <div className="max-w-7xl mx-auto">
+        <SectionHeader title="Proof of Utility" subtitle="Real results from internal tools." />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+          <CaseSnippet
+            industry="Financial Services"
+            outcome="Quoting Time Reduced by 7 Days"
+            description="Replaced a manual Excel-based quoting process with a structured AI wizard. Logic constraints ensure 100% compliance with pricing tables."
+            highlight="55+ Active Weekly Users"
+          />
+          <CaseSnippet
+            industry="Logistics & Ops"
+            outcome="42% Reduction in Manual Entry"
+            description="Deployed an email parsing agent that routes vendor invoices directly to ERP with human-in-the-loop validation for edge cases."
+            highlight="1,300× ROI (Projected 3-Yr)"
+          />
+        </div>
+
+        <div className="mt-12 text-center">
+          <button
+            onClick={() => navigate('/proof')}
+            className="inline-flex items-center gap-2 text-slate-900 border-b border-slate-900 pb-0.5 hover:text-[#B85C38] hover:border-[#B85C38] transition-colors font-medium cursor-pointer"
           >
-            VIEW MINDGLEAM DEMO
-            <ExternalLink className="w-4 h-4 ml-2 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
-          </a>
-        </motion.div>
-        
-        <motion.div
-          style={{ y: yImage }}
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="relative rounded-[4px] overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-900/10 group bg-white"
-        >
-          <div className="absolute inset-0 bg-[#BF5738]/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
-          {/* Placeholder for MindGleam UI Image */}
-          <div className="bg-slate-50 aspect-video flex items-center justify-center relative">
-             <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-             <div className="relative z-10 text-center p-8">
-                <div className="w-16 h-16 bg-[#BF5738] rounded-full mx-auto mb-4 flex items-center justify-center text-white font-serif font-bold text-3xl shadow-lg ring-4 ring-white">M</div>
-                <h4 className="text-slate-900 font-bold text-xl font-serif">MindGleam</h4>
-                <p className="text-slate-500 text-sm mt-2 font-mono uppercase tracking-widest">Internal Asset Management</p>
-             </div>
-          </div>
-        </motion.div>
+            Read detailed breakdown <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </section>
   );

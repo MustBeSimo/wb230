@@ -3,14 +3,14 @@ import { motion, Variants } from 'framer-motion';
 import { ArrowRight, CalendarClock } from 'lucide-react';
 
 export const ScarcityBanner: React.FC = () => (
-  <motion.div 
+  <motion.div
     initial={{ y: -50, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     transition={{ delay: 0.5, duration: 0.5 }}
     className="w-full bg-slate-900 border-b border-slate-800 py-2 px-4 text-center sticky top-0 z-50 shadow-md"
   >
     <p className="text-xs md:text-sm font-medium text-slate-200 tracking-wide font-sans">
-      <span className="inline-block w-2 h-2 rounded-full bg-[#BF5738] mr-2 animate-pulse"></span>
+      <span className="inline-block w-2 h-2 rounded-full bg-[#B85C38] mr-2 animate-pulse"></span>
       Status: Open for Q1 2026 Projects (Jan-Mar)
     </p>
   </motion.div>
@@ -22,8 +22,8 @@ interface BookingButtonProps {
   variant?: 'primary' | 'secondary';
 }
 
-export const BookingButton: React.FC<BookingButtonProps> = ({ 
-  text = "Book a Discovery Call (Free)", 
+export const BookingButton: React.FC<BookingButtonProps> = ({
+  text = "Book a Discovery Call (Free)",
   className = "",
   variant = 'primary'
 }) => {
@@ -32,7 +32,7 @@ export const BookingButton: React.FC<BookingButtonProps> = ({
   };
 
   const baseStyles = "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-[2px] font-semibold transition-all duration-300 group shadow-sm";
-  const primaryStyles = "bg-slate-900 text-white hover:bg-[#BF5738] hover:shadow-lg hover:shadow-slate-900/10";
+  const primaryStyles = "bg-slate-900 text-white hover:bg-[#B85C38] hover:shadow-lg hover:shadow-slate-900/10";
   const secondaryStyles = "bg-transparent border border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white";
 
   return (
@@ -59,14 +59,14 @@ export const SectionHeader: React.FC<{ title: string; subtitle?: string }> = ({ 
         {subtitle}
       </p>
     )}
-    <div className="h-1 w-20 bg-[#BF5738] mt-6 rounded-full"></div>
+    <div className="h-1 w-20 bg-[#B85C38] mt-6 rounded-full"></div>
   </div>
 );
 
 // --- TYPEWRITER TEXT COMPONENT ---
 export const TypewriterText: React.FC<{ text: string }> = ({ text }) => {
   const words = text.split(" ");
-  
+
   const container: Variants = {
     hidden: { opacity: 0 },
     visible: (i: number = 1) => ({

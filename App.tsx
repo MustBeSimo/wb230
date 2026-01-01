@@ -1,54 +1,32 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HomePage } from './components/pages/HomePage';
+import { ResourcesPage } from './components/pages/ResourcesPage';
+import { ProofPage } from './components/pages/ProofPage';
+import { StickyHeader } from './components/StickyHeader';
 import { ScarcityBanner } from './components/UI';
-import Hero from './components/Hero';
-import { ProblemSection, SolutionLadder, UseCases, LabProof, TechStack } from './components/sections';
-import { Footer } from './components/Footer';
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
 
 const App: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Background Parallax Effect
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-
   return (
-    <div ref={containerRef} className="relative min-h-screen bg-[#FAFAF9] text-slate-900 overflow-hidden">
-      
-      {/* Global Background Elements - Adjusted for Light Mode */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Terracotta Accent Blob */}
-        <motion.div 
-          style={{ y: bgY }}
-          className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#BF5738] rounded-full blur-[120px] opacity-[0.08]" 
-        />
-        {/* Navy Accent Blob */}
-        <motion.div 
-          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]) }}
-          className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-slate-900 rounded-full blur-[140px] opacity-[0.05]" 
-        />
+    <Router>
+      <ScrollToTop />
+      <div className="relative min-h-screen bg-[#FAFAF9] text-slate-900 font-sans selection:bg-[#B85C38] selection:text-white">
+        <StickyHeader />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/resources" element={<ResourcesPage />} />
+          <Route path="/proof" element={<ProofPage />} />
+        </Routes>
       </div>
-
-      {/* Main Content Stack */}
-      <div className="relative z-10 flex flex-col">
-        <ScarcityBanner />
-        
-        <main className="flex-grow">
-          <Hero />
-          <ProblemSection />
-          <SolutionLadder />
-          <UseCases />
-          <TechStack />
-          <LabProof />
-        </main>
-
-        <Footer />
-      </div>
-
-    </div>
+    </Router>
   );
 };
 
